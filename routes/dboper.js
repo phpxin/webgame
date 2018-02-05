@@ -1,13 +1,8 @@
 const Mysql = require('mysql') ;
+const wgConfig = require('./config') ;
 
 
-const connection = Mysql.createConnection({
-	host : "127.0.0.1" ,
-	user : "root" ,
-	password : "lixinxin" ,
-	database : "drawserver" ,
-	charset : 'utf8mb4_general_ci'
-}) ;
+const connection = Mysql.createConnection(wgConfig.dbconf) ;
 
 connection.connect();
 
