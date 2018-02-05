@@ -55,11 +55,25 @@ app.use(require('cookie-parser')());
 
 
 io.on('connection', function (socket) {
+
+  socket.on('joinRoom', function(data){
+    let roomStr = 'room_'+data.roomid;
+    socket.join(roomStr, () => {
+      //let rooms = Objects.keys(socket.rooms);
+      //console.log(JSON.stringify(socket.rooms)); // [ <socket.id>, 'room 237' ]
+      io.to(roomStr).emit('newUserJoin', 'a new user has joined the room'); // broadcast to everyone in the room
+    });
+
+  })
   
   socket.on('draw', function (data) {
+    
+    let roomStr = 'room_'+data.roomid;
+    let points = data.points;
     console.log(data);
-    //socket.emit('drawSync', data);
-    socket.broadcast.emit('drawSync', data);
+    //socket.emit('drawSync', data); // 响应数据
+    //socket.broadcast.emit('drawSync', data); // 广播
+    io.to(roomStr).emit('drawSync', points);
   });
 });
 

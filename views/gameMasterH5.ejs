@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
+    <title><%=title%></title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" >
+</head>
+<body>
+
+<canvas width="400" height="400" id="drawer"></canvas>
+<p>roomeID: <%=roomInfo.id%>, username: <%=username%>, keywords: <%=roomInfo.keywords%></p>
+<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
+<script>
+    var roomid = '<%=roomInfo.id%>' ;
+</script>
+<script src="/javascripts/game-master.js" type="text/javascript" language="javascript"></script>
+</body>
+</html>

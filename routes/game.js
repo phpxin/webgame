@@ -40,7 +40,6 @@ router.get('/', async function(req, res, next) {
 	var username = null ;
 
 	var roomid = req.cookies.roomid; // 如果有未完成的房间id，禁止重复创建
-	
 
 	if(roomid){
 		var sql = "select * from room where id="+roomid ;
@@ -70,10 +69,23 @@ router.get('/', async function(req, res, next) {
 		username = req.cookies.username;
 	}
 
+	console.log(JSON.stringify(req.headers));
+	let userAgent = req.headers['user-agent'] ;
+	let device = 'pc' ;
+	if (/android|ipad|iphone/i.test(userAgent)) {
+		device = 'h5' ;
+	}
+
 	var role = 'slaver' ;
 	if(username==roomInfo.adduser){
 		role = 'master' ;
-		res.render('gameMaster', { title: 'Express Game' ,username: username, roomInfo: roomInfo, role: role });
+		let pageSets = { title: 'Express Game' ,username: username, roomInfo: roomInfo, role: role } ;
+		if (device == 'pc') {
+			res.render('gameMaster', pageSets);
+		}else{
+			res.render('gameMasterH5', pageSets);
+		}
+		
 	}else{
 		res.render('gameSlaver', { title: 'Express Game' ,username: username, roomInfo: roomInfo, role: role });
 	}

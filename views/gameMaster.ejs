@@ -3,120 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title><%=title%></title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            
-        }
-        #drawer,#drawer_copy{
-            border:1px solid red;
-        }
-        button{
-            padding: 5px 20px;
-            margin: 0 10px;
-        }
-
-    </style>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" >
 </head>
 <body>
 <p>roomeID: <%=roomInfo.id%>, username: <%=username%>, keywords: <%=roomInfo.keywords%></p>
 <canvas width="400" height="400" id="drawer"></canvas>
-<script src="/socket.io/socket.io.js"></script>
+<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
 <script>
-    // init socket
-    var socket = io.connect('http://localhost:3001');
-
-    socket.on('drawSync', function (data) {
-        
-        console.log("drawSync message: " + JSON.stringify(data));
-
-    });
-
-    //init socket ok
-
-
-    var cdom = document.getElementById('drawer');
-    var cobj = cdom.getContext('2d');//获取一个canvas的2d上下文
-
-    // var cdom_copy = document.getElementById('drawer_copy');
-    // var cobj_copy = cdom_copy.getContext('2d');
-
-    var m_x = 0;
-    var m_y = 0;
-    var flag_draw = false;
-
-    var senddata = [];
-    var _senddata = [];
-
-    cdom.onmousedown = function(event){
-        console.log(event)
-
-        flag_draw = true;
-        m_x = event.offsetX;
-        m_y = event.offsetY;
-
-        cobj.beginPath();
-        cobj.moveTo(m_x, m_y);
-
-        addData(m_x, m_y);
-        _addData(m_x, m_y);
-    }
-
-    cdom.onmousemove = function(event){
-        if(flag_draw){
-            var v_m_x = event.offsetX ;
-            var v_m_y = event.offsetY ;
-
-            cobj.lineTo(v_m_x,v_m_y) ;
-            cobj.stroke();
-
-            if(Math.abs(m_x-v_m_x)>5 && Math.abs(m_y-v_m_y)>5){
-                m_x = v_m_x;
-                m_y = v_m_y;
-                addData(v_m_x, v_m_y);
-            }
-            _addData(v_m_x, v_m_y);
-        }
-    }
-
-    cdom.onmouseup = function(event){
-        flag_draw = false;
-
-        var v_m_x = event.x ;
-        var v_m_y = event.y ;
-
-        addData(v_m_x, v_m_y);
-        _addData(v_m_x, v_m_y);
-        senddata_do();
-    }
-
-
-
-    function senddata_do(){
-        var _debug = JSON.stringify(senddata);
-        console.log(_debug);
-
-        
-        socket.emit('draw', senddata);
-        // send data end
-
-        senddata = [];
-
-        var _debug2 = JSON.stringify(_senddata);
-        console.log(_debug2);
-        _senddata = [] ;
-    }
-
-    function addData(x, y){
-        senddata.push([x,y]) ;
-    }
-
-    function _addData(x,y){
-        _senddata.push([x,y]) ;
-    }
-
-
+    var roomid = '<%=roomInfo.id%>' ;
 </script>
+<script src="/javascripts/game-master.js" type="text/javascript" language="javascript"></script>
 </body>
 </html>
