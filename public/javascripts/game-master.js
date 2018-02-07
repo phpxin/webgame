@@ -2,7 +2,7 @@
 
 var socket = io.connect(window.location.origin);
 
-socket.emit('joinRoom', {roomid: roomid});
+socket.emit('joinRoom', {roomid: roomid, username: username});
 
 socket.on('drawSync', function (data) {
     
@@ -10,14 +10,34 @@ socket.on('drawSync', function (data) {
 
 });
 
+socket.on('msgSync', function (data) {
+    
+    var html = "<li><span class='c-user'>"+data.username+"</span>："+data.msg+"</li>";
+    $("#room-chat").append(html);
+    $('#room-chat-body').scrollTop(parseInt($('#room-chat').height()));
+
+});
+
 socket.on('newUserJoin', function (data) {
     
-    console.log("newUserJoin message: " + JSON.stringify(data));
+    //console.log("newUserJoin message: " + JSON.stringify(data));
+    var html = "<li><span class='c-user'>系统</span>：欢迎"+data.username+"加入房间</li>";
+    $("#room-chat").append(html);
+    $('#room-chat-body').scrollTop(parseInt($('#room-chat').height()));
+});
 
+socket.on('success', function(data){
+    alert("恭喜"+data.username+"猜对"+data.msg);
+    window.location.href="/" ;
 });
 
 //init socket ok
 
+$('#chat-input button').click(function(){
+    let msg = $('#chat-input textarea').val();
+    socket.emit('msg',{roomid: roomid, username: username, msg: msg});
+    $('#chat-input textarea').val("");
+})
 
 var cdom = document.getElementById('drawer');
 var cobj = cdom.getContext('2d');//获取一个canvas的2d上下文

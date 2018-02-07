@@ -2,10 +2,13 @@ var express = require('express');
 var router = express.Router();
 var dboper = require('./dboper');
 
+var keywords_collection=['黄瓜','香蕉','榴莲','苹果','柑橘','火龙果','西红柿','梨','樱桃','圣女果'] ;
+
 //创建房间，返回房间ID
 function createRoom(username){
 	return new Promise(async function(resole, reject){
-		var keywords = '黄瓜' ;
+		let k_index = parseInt(Math.random()*1000)%keywords_collection.length ;
+		var keywords = keywords_collection[k_index] ;
 		var status = 1 ; //等待玩家加入
 		var sql = "insert into room(keywords,status,adduser) values('"+keywords+"', '"+status+"', '"+username+"')" ;
 		var insertid = await dboper.sql_insert(sql);
@@ -26,10 +29,13 @@ function joinRoom(username, roomId){
 	return new Promise(async function(resole, reject){
 		var sql = "select * from room where id="+roomId+' limit 1' ;
 		var _info = await dboper.sql_select(sql) ;
-		if (!_info) {
+		if (!_info || _info.length<=0) {
 			resole(false) ;
 		}
 
+		sql = "insert into roomuser(roomid,username) values('"+roomId+"', '"+username+"')" ;
+		await dboper.sql_insert(sql);
+		
 		resole(_info[0]);
 	}) ;
 }
@@ -39,28 +45,40 @@ router.get('/', async function(req, res, next) {
 	var roomInfo = null ;
 	var username = null ;
 
-	var roomid = req.cookies.roomid; // 如果有未完成的房间id，禁止重复创建
+	var roomid = parseInt(req.cookies.roomid); // 如果有未完成的房间id，禁止重复创建
 
 	if(roomid){
+
 		var sql = "select * from room where id="+roomid ;
 		var _info = await dboper.sql_select(sql) ;
+		if (!_info) {
+			res.redirect('/err?errmsg=房间不存在');
+		}
 		roomInfo = _info[0] ;
 	}
 
 	if(roomInfo==null || roomInfo.status==3){
+
 		username = req.query.uname ;
 		if(req.query.rn>0){
 			//加入房间
 			//coding...
 			roomInfo = await joinRoom(username, req.query.rn) ; 
+
 			if (!roomInfo) {
-				res.location('/err');
+
+				res.redirect('/err?errmsg=房间不存在');
+			}
+
+
+			if (roomInfo.status==3) {
+				res.redirect('/err?errmsg=游戏已结束');
 			}
 		}else{
 			//创建
 			roomInfo = await createRoom(username);
 			if (!roomInfo) {
-				res.location('/err');
+				res.redirect('/err?errmsg=创建失败');
 			}
 		}
 		res.cookie('roomid', roomInfo.id);
@@ -69,17 +87,26 @@ router.get('/', async function(req, res, next) {
 		username = req.cookies.username;
 	}
 
-	console.log(JSON.stringify(req.headers));
 	let userAgent = req.headers['user-agent'] ;
 	let device = 'pc' ;
 	if (/android|ipad|iphone/i.test(userAgent)) {
 		device = 'h5' ;
 	}
 
+	roomUsers = await dboper.sql_select("select * from roomuser where roomid="+roomInfo.id);
+
+	let pageSets = { 
+		title: 'Express Game' , 
+		username: username , 
+		roomInfo: roomInfo , 
+		roomUsers: roomUsers , 
+		role: role } ; 
+
 	var role = 'slaver' ;
+
 	if(username==roomInfo.adduser){
 		role = 'master' ;
-		let pageSets = { title: 'Express Game' ,username: username, roomInfo: roomInfo, role: role } ;
+		
 		if (device == 'pc') {
 			res.render('gameMaster', pageSets);
 		}else{
@@ -87,7 +114,11 @@ router.get('/', async function(req, res, next) {
 		}
 		
 	}else{
-		res.render('gameSlaver', { title: 'Express Game' ,username: username, roomInfo: roomInfo, role: role });
+		if (device == 'pc') {
+			res.render('gameSlaver', pageSets);
+		}else{
+			res.render('gameSlaverH5', pageSets);
+		}
 	}
 
   	

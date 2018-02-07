@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var game = require('./routes/game');
+var dboper = require('./routes/dboper') ;
 
 var app = express();
 
@@ -30,7 +31,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/game', game);
 app.use('/err',function(req, res, next){
-  res.render('err');
+
+  let viewParams = {} ;
+  viewParams.errmsg = req.query.errmsg ? req.query.errmsg : '出错了' ;
+  viewParams.url = req.query.url ? req.query.url : '/' ;
+
+  res.render('err', viewParams);
 });
 
 // catch 404 and forward to error handler
@@ -61,7 +67,8 @@ io.on('connection', function (socket) {
     socket.join(roomStr, () => {
       //let rooms = Objects.keys(socket.rooms);
       //console.log(JSON.stringify(socket.rooms)); // [ <socket.id>, 'room 237' ]
-      io.to(roomStr).emit('newUserJoin', 'a new user has joined the room'); // broadcast to everyone in the room
+      //console.log(JSON.stringify(data))
+      io.to(roomStr).emit('newUserJoin', {username: data.username}); // broadcast to everyone in the room
     });
 
   })
@@ -75,6 +82,25 @@ io.on('connection', function (socket) {
     //socket.broadcast.emit('drawSync', data); // 广播
     io.to(roomStr).emit('drawSync', points);
   });
+
+  socket.on('msg', async function (data) {
+
+    let roomStr = 'room_'+data.roomid;
+    let msg = data.msg ;
+    let username = data.username ;
+
+    io.to(roomStr).emit('msgSync', {username: username, msg: msg});
+
+    let roomInfo = await dboper.sql_select("select * from room where id="+data.roomid);
+    roomInfo = roomInfo[0] ;
+
+    if(roomInfo['adduser']!=username && msg==roomInfo['keywords']){
+      io.to(roomStr).emit('success', {username: username, msg: msg});
+      await dboper.sql_update("update room set status=3,winner='"+username+"'");
+    }
+
+  }) ;
+
 });
 
 module.exports = app;

@@ -3,29 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title><%=title%></title>
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            
-        }
-        #drawer,#drawer_copy{
-            border:1px solid red;
-        }
-        button{
-            padding: 5px 20px;
-            margin: 0 10px;
-        }
-
-    </style>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" >
 </head>
 <body>
-<p>roomeID: <%=roomInfo.id%>, username: <%=username%></p>
-<canvas width="400" height="400" id="drawer_copy"></canvas>
-<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
+
+<div class="header">
+	<p>您好 <%=username%>, 房间号: <%=roomInfo.id%></p>
+
+</div>
+
+<div class="main-content">
+	<div class="drawer-c">
+		<canvas width="400" height="400" id="drawer_copy"></canvas>
+	</div>
+	<div class="intro">
+		
+		<div class="room-chat-body" id="room-chat-body">
+			<ul id="room-chat">
+
+			</ul>
+		</div>
+
+		<div class="chat-input" id="chat-input">
+			<textarea type="text" class="msg" placeholder="请输入聊天内容或答案" cols="40" rows="5"></textarea>
+			<button type="button" class="send">发送</button>
+
+		</div>
+
+	</div>
+	<div class="room-users">在线用户：<% for(let i in roomUsers){ %> <%=roomUsers[i].username%> <% } %></div>
+	<div class="clear-div"></div>
+</div>
+
 <script>
     var roomid = '<%=roomInfo.id%>' ;
+    var username = '<%=username%>' ;
 </script>
+<script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript" language="javascript"></script>
+<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
 <script src="/javascripts/game-slaver.js" type="text/javascript" language="javascript"></script>
+<script>
+	$('.room-chat').scrollTop(300);
+
+</script>
 </body>
 </html>

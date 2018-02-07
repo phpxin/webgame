@@ -6,12 +6,45 @@
     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" >
 </head>
 <body>
-<p>roomeID: <%=roomInfo.id%>, username: <%=username%>, keywords: <%=roomInfo.keywords%></p>
-<canvas width="400" height="400" id="drawer"></canvas>
-<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
+
+<div class="header">
+	<p>您好 <%=username%>, 房间号: <%=roomInfo.id%>, 词: <span class="keywords"><%=roomInfo.keywords%></span></p>
+
+</div>
+
+<div class="main-content">
+	<div class="drawer-c">
+		<canvas width="400" height="400" id="drawer"></canvas>
+	</div>
+	<div class="intro">
+		
+		<div class="room-chat-body" id="room-chat-body">
+			<ul id="room-chat">
+
+			</ul>
+		</div>
+
+		<div class="chat-input" id="chat-input">
+			<textarea type="text" class="msg" placeholder="请输入聊天内容或答案" cols="50" rows="5"></textarea>
+			<button type="button" class="send">发送</button>
+
+		</div>
+
+	</div>
+	<div class="room-users">在线用户：<% for(let i in roomUsers){ %> <%=roomUsers[i].username%> <% } %></div>
+	<div class="clear-div"></div>
+</div>
+
 <script>
     var roomid = '<%=roomInfo.id%>' ;
+    var username = '<%=username%>' ;
 </script>
+<script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript" language="javascript"></script>
+<script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
 <script src="/javascripts/game-master.js" type="text/javascript" language="javascript"></script>
+<script>
+	$('.room-chat').scrollTop(300);
+
+</script>
 </body>
 </html>

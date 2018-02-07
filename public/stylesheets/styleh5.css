@@ -1,0 +1,49 @@
+*{
+    margin:0;
+    padding:0;
+    
+}
+body{
+
+}
+#drawer,#drawer_copy{
+    border:1px solid red;
+
+}
+button{
+    padding: 5px 20px;
+    margin: 0 10px;
+}
+.clear-div{
+	clear: both;
+}
+.keywords{
+	color: red;
+}
+.room-users{
+	float:left;
+	margin: 10px 0;
+	width: 100%;
+}
+.room-chat-body{
+	height: 150px;
+	overflow: scroll;
+	background: #eee ;
+	margin-top: 10px;
+}
+.chat-input {
+	margin-top: 10px;
+}
+.chat-input textarea{
+	width: 90%;
+    border: 1px solid red;
+    margin-left: 10px;
+}
+.chat-input button{
+	width: 90%;
+    line-height: 30px;
+    border: 1px solid red;
+}
+.c-user{
+	color: #f90;
+}
