@@ -24,14 +24,29 @@
         background: blue;
         color: white;
     }
+    .info{
+        font-size: 12px;
+        color: #aaa;
+        font-style: italic;
+    }
+    li{
+        margin-top: 10px;
+    }
     </style>
 </head>
 <body>
 <h2>小游戏：你画我猜</h1>
 <p><lable>姓名：</lable><input type="text" id="username" placeholder="必填：请输入姓名"></p>
 <p><button id="create">创建房间</button></p>
-<p><input type="text" id="room-number" placeholder="如需加入房间，请输入房间号"><button id="join">加入房间</button></p>
-
+<p>房间列表：</p>
+<%if(roomList.length<=0){%>
+<p class="info">当前没有房间，请创建房间</p>
+<%}%>
+<ul>
+<%for(let i in roomList){%>
+<li>房主：<%=roomList[i].adduser%> <button id="join" data-id="<%=roomList[i].id%>">加入房间</button></li>
+<%}%>
+</ul>
 <script type="text/javascript" src="/javascripts/jquery-3.2.1.min.js"></script>
 <script>
     $("#create").click(function(){
@@ -47,7 +62,7 @@
 
     $("#join").click(function(){
         var uname = $("#username").val();
-        var rn = $("#room-number").val();
+        var rn = $(this).attr("data-id");
 
         if (''==uname) {
             alert("请输入用户名");
