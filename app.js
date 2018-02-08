@@ -62,6 +62,19 @@ app.use(require('cookie-parser')());
 
 io.on('connection', function (socket) {
 
+  socket.on('disconnect', function(reason){
+    console.log('socket disconnect : '+reason);
+  })
+
+  socket.on('error', (error) => {
+    // ...
+    console.log('socket error : '+JSON.stringify(error));
+  });
+
+  socket.on('disconnecting', function(reason){
+    console.log('socket disconnecting : '+reason);
+  })
+
   socket.on('joinRoom', function(data){
     let roomStr = 'room_'+data.roomid;
     socket.join(roomStr, () => {
@@ -84,6 +97,8 @@ io.on('connection', function (socket) {
   });
 
   socket.on('msg', async function (data) {
+
+    console.log("room ids "+JSON.stringify(socket.rooms));
 
     let roomStr = 'room_'+data.roomid;
     let msg = data.msg ;
