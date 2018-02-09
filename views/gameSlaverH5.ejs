@@ -20,17 +20,18 @@
 
 	<div class="chat-input" id="chat-input">
 		<textarea type="text" class="msg" placeholder="请输入聊天内容或答案" cols="40" rows="5"></textarea>
-		<button type="button" class="send">发送</button>
-
+		<button type="button" id="send">发送</button>
+		<button type="button" id="quit">退出房间</button>
 	</div>
 
 </div>
-<div class="room-users">在线用户：<% for(let i in roomUsers){ %> <%=roomUsers[i].username%> <% } %></div>
+<div class="room-users" id="room-users">在线用户：<% for(let i in roomUsers){ %><span class="ru-item"><%=roomUsers[i].username%></span><% } %></div>
 <script>
     var roomid = '<%=roomInfo.id%>' ;
     var username = '<%=username%>' ;
 </script>
 <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript" language="javascript"></script>
+<script src="/javascripts/public.js" type="text/javascript" language="javascript"></script>
 <script src="/socket.io/socket.io.js" type="text/javascript" language="javascript"></script>
 <script src="/javascripts/game-slaver.js" type="text/javascript" language="javascript"></script>
 </body>

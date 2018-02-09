@@ -101,6 +101,24 @@ io.on('connection', function (socket) {
 
   }) ;
 
+  socket.on('masterQuit', async function(data){
+
+    //let 
+    let roomStr = 'room_'+data.roomid;   
+    io.to(roomStr).emit('masterQuitSync'); // broadcast to everyone in the room
+
+    await dboper.sql_update("update room set status=3 where id="+data.roomid);
+  })
+
+  socket.on('slaverQuit', async function(data){
+
+    //let 
+    let roomStr = 'room_'+data.roomid;   
+    io.to(roomStr).emit('slaverQuitSync', {username: data.username}); // broadcast to everyone in the room
+
+    await dboper.sql_delete("delete from roomuser where roomid="+data.roomid+" and username='"+data.username+"'");
+  })
+
 });
 
 module.exports = app;

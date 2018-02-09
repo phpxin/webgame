@@ -18,6 +18,9 @@ button{
     padding: 5px 20px;
     margin: 0 10px;
 }
+.ru-item{
+	margin-left: 10px;
+}
 .clear-div{
 	clear: both;
 }

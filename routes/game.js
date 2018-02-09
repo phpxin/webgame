@@ -33,6 +33,7 @@ function joinRoom(username, roomId){
 			resole(false) ;
 		}
 
+
 		sql = "insert into roomuser(roomid,username) values('"+roomId+"', '"+username+"')" ;
 		await dboper.sql_insert(sql);
 		
@@ -62,7 +63,12 @@ router.get('/', async function(req, res, next) {
 		username = req.query.uname ;
 		if(req.query.rn>0){
 			//加入房间
-			//coding...
+
+			let counter = await dboper.sql_select("select count(*) as c from roomuser where roomid="+req.query.rn+" and username='"+username+"'") ;
+			if(counter[0].c > 0){
+				res.redirect('/err?errmsg=用户名重复');
+			}
+
 			roomInfo = await joinRoom(username, req.query.rn) ; 
 
 			if (!roomInfo) {
