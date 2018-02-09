@@ -44,7 +44,7 @@
 <%}%>
 <ul>
 <%for(let i in roomList){%>
-<li>房主：<%=roomList[i].adduser%> <button id="join" data-id="<%=roomList[i].id%>">加入房间</button></li>
+<li>房主：<%=roomList[i].adduser%> <button class="join" data-id="<%=roomList[i].id%>">加入房间</button></li>
 <%}%>
 </ul>
 <script type="text/javascript" src="/javascripts/jquery-3.2.1.min.js"></script>
@@ -61,7 +61,7 @@
         window.location.href="/game?uname="+uname+"&rn=0" ;
     });
 
-    $("#join").click(function(){
+    $(".join").click(function(){
         var uname = $("#username").val();
         var rn = $(this).attr("data-id");
 
