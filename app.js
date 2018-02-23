@@ -136,4 +136,9 @@ io.on('connection', function (socket) {
 
 });
 
+process.on('uncaughtException', function (err) {
+  //do something like log error
+  console.log(err) ;
+});
+
 module.exports = app;
